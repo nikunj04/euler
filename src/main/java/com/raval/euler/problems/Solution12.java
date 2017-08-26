@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -75,9 +76,8 @@ public class Solution12 {
             triangularMap.put(limit, triangularMap.get(limit-1)+limit);
             return triangularMap.get(limit);
         }
-        return Stream.iterate(1L, aLong -> aLong+1)
-                .limit(limit)
-                .mapToLong(value -> value)
+        return LongStream
+                .range(1L, limit)
                 .sum();
     }
 
