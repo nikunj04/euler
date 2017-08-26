@@ -46,7 +46,7 @@ public class Utility {
         return max;
     }
 
-    static <T> List<List<T>> readFile(String strResource, Function<String, List<T>>  function) throws Exception{
+    static <T> List<T> readFile(String strResource, Function<String, T>  function) throws Exception{
         Path resource = Paths.get(ClassLoader.getSystemResource(strResource).toURI());
         List<List<T>> returnList = new ArrayList<>();
         try (Stream<String> lines = Files.lines(resource)) {
