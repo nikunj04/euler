@@ -1,5 +1,6 @@
 package com.raval.euler.problems;
 
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -24,16 +25,14 @@ public class Solution6 {
 
     public static void main(String[] args) {
         int limit = 100;
-        Long sum = Stream.iterate(1L, aLong -> aLong + 1)
-                .limit(limit)
+        Long sum = LongStream.range(1L, limit)
                 .reduce((aLong, aLong2) -> aLong + aLong2)
                 .orElse(0L);
         Long squareOfSum = sum * sum;
         System.out.println(squareOfSum);
 
         Long sumOfSquare =
-                Stream.iterate(1L, aLong -> aLong + 1)
-                        .limit(limit)
+                LongStream.range(1L, limit)
                         .map(aLong -> aLong * aLong)
                         .reduce((aLong, aLong2) -> aLong + aLong2)
                         .orElse(0L);

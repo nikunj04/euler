@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
@@ -50,22 +51,21 @@ public class Solution8 {
 
 
     Long productForPosition(List<Long> parsedLines,int numberOfDigits,int position){
-        return Stream.iterate(0L, i -> i+1)
-                .limit(numberOfDigits)
-                .reduce(1L, (aLong, aLong2) -> aLong * parsedLines.get(position+aLong2.intValue()));
+        return IntStream.range(0, numberOfDigits)
+                .mapToLong(offSet -> parsedLines.get(position + offSet))
+                .reduce(1L, (result, value) -> result * value);
     }
 
     Long maxProduct(int numberOfDigits) throws Exception{
         List<Long> parsedLines = getSeries();
-        return
-                Stream.iterate(0L, aLong -> aLong + 1L)
-                        .limit(parsedLines.size() - numberOfDigits)
-                        .map(position -> productForPosition(parsedLines, numberOfDigits, position.intValue()))
-                        .mapToLong(value -> value).max().orElse(Long.MIN_VALUE);
+        return IntStream.range(0, parsedLines.size() - numberOfDigits)
+                        .mapToLong(position -> productForPosition(parsedLines, numberOfDigits, position))
+                        .max().orElse(Long.MIN_VALUE);
     }
 
 
     List<Long> getSeries() throws Exception{
+
         Function<String, List<Long>> functionToParseLine =
                 str -> Stream.iterate(0, i -> i+1)
                         .limit(str.length())
