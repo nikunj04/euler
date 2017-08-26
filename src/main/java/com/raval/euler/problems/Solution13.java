@@ -134,7 +134,6 @@ public class Solution13 {
             int sum = carry + Character.getNumericValue(valueA[i]) + Character.getNumericValue(valueB[i]);
             carry = sum / 10;
             result[i] = Character.forDigit(sum % 10, 10);
-            //System.out.println(result[i]);
         }
         return removeLeadingZeros(new String(result));
     }
