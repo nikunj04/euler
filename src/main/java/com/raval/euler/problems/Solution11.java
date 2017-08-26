@@ -3,134 +3,133 @@ package com.raval.euler.problems;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+/**
+ * In the 20×20 grid below, four numbers along a diagonal line have been marked in red.
+ * <p>
+ * 08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
+ * 49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00
+ * 81 49 31 73 55 79 14 29 93 71 40 67 53 88 30 03 49 13 36 65
+ * 52 70 95 23 04 60 11 42 69 24 68 56 01 32 56 71 37 02 36 91
+ * 22 31 16 71 51 67 63 89 41 92 36 54 22 40 40 28 66 33 13 80
+ * 24 47 32 60 99 03 45 02 44 75 33 53 78 36 84 20 35 17 12 50
+ * 32 98 81 28 64 23 67 10 26 38 40 67 59 54 70 66 18 38 64 70
+ * 67 26 20 68 02 62 12 20 95 63 94 39 63 08 40 91 66 49 94 21
+ * 24 55 58 05 66 73 99 26 97 17 78 78 96 83 14 88 34 89 63 72
+ * 21 36 23 09 75 00 76 44 20 45 35 14 00 61 33 97 34 31 33 95
+ * 78 17 53 28 22 75 31 67 15 94 03 80 04 62 16 14 09 53 56 92
+ * 16 39 05 42 96 35 31 47 55 58 88 24 00 17 54 24 36 29 85 57
+ * 86 56 00 48 35 71 89 07 05 44 44 37 44 60 21 58 51 54 17 58
+ * 19 80 81 68 05 94 47 69 28 73 92 13 86 52 17 77 04 89 55 40
+ * 04 52 08 83 97 35 99 16 07 97 57 32 16 26 26 79 33 27 98 66
+ * 88 36 68 87 57 62 20 72 03 46 33 67 46 55 12 32 63 93 53 69
+ * 04 42 16 73 38 25 39 11 24 94 72 18 08 46 29 32 40 62 76 36
+ * 20 69 36 41 72 30 23 88 34 62 99 69 82 67 59 85 74 04 36 16
+ * 20 73 35 29 78 31 90 01 74 31 49 71 48 86 81 16 23 57 05 54
+ * 01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48
+ * <p>
+ * The product of these numbers is 26 × 63 × 78 × 14 = 1788696.
+ * <p>
+ * What is the greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid?
+ */
 
 /**
  * Created by nikunj on 25/08/17.
  */
 public class Solution11 {
-    Integer[][] grid;
 
-    public Solution11() throws Exception{
-        grid = getGrid();
 
-    }
+	static class Tuple {
+		static Function<Tuple, Tuple> moveHorizontalLeft = tuple -> new Tuple(tuple.y, tuple.x - 1);
+		static Function<Tuple, Tuple> moveHorizontalRight = tuple -> new Tuple(tuple.y, tuple.x + 1);
+		static Function<Tuple, Tuple> moveVerticalUp = tuple -> new Tuple(tuple.y - 1, tuple.x);
+		static Function<Tuple, Tuple> moveVerticalDown = tuple -> new Tuple(tuple.y + 1, tuple.x);
+		static Function<Tuple, Tuple> moveDiagonalLeftUp = tuple -> new Tuple(tuple.y - 1, tuple.x - 1);
+		static Function<Tuple, Tuple> moveDiagonalLeftDown = tuple -> new Tuple(tuple.y + 1, tuple.x - 1);
+		static Function<Tuple, Tuple> moveDiagonalRightUp = tuple -> new Tuple(tuple.y - 1, tuple.x + 1);
+		static Function<Tuple, Tuple> moveDiagonalRightDown = tuple -> new Tuple(tuple.y + 1, tuple.x + 1);
 
-    public static void main(String[] args) throws Exception{
-        System.out.println(new Solution11().getMaxProductForGrid());
-    }
+		final int y;
+		final int x;
 
-    Integer getMaxProductForGrid(){
-        Integer max = Integer.MIN_VALUE;
-        for(int y=0;y<grid.length;y++){
-            for(int x=0;x<grid[y].length;x++){
-                max = Integer.max(max, getMaxProductForAPoint(y, x));
-            }
-        }
-        return max;
-    }
+		public Tuple(int y, int x) {
+			this.y = y;
+			this.x = x;
+		}
 
-    Integer getMaxProductForAPoint(int y, int x){
-        Integer horizontal = Integer.max(getHorizontalLeftProduct(y,x),getHorizontalRightProduct(y,x));
-        Integer vertical = Integer.max(getVerticalDownProduct(y,x),getVerticalUpProduct(y,x));
-        Integer diagonal = getDiagonalProduct(y,x);
-        System.out.println("("+y+","+x+") : "+horizontal + " , "+ vertical + " , "+diagonal);
-        return NumberUtils.max(horizontal, vertical, diagonal);
-    }
+		Integer getFromGrid(List<List<Integer>> grid) {
+			if (y < 0 || x < 0 || y >= grid.size() || x >= grid.get(y).size()) {
+				return 0;
+			}
+			return grid.get(y).get(x);
+		}
 
-    Integer getHorizontalRightProduct(int y, int x){
-        if(x+3 > 19){
-            return Integer.MIN_VALUE;
-        }else{
-            return grid[y][x] * grid[y][x+1] * grid[y][x+2] * grid[y][x+3];
-        }
-    }
+		Tuple move(Function<Tuple, Tuple> howToMove) {
+			return howToMove.apply(this);
+		}
+	}
 
-    Integer getHorizontalLeftProduct(int y, int x){
-        if(x-3 < 0){
-            return Integer.MIN_VALUE;
-        }else{
-            return grid[y][x] * grid[y][x-1] * grid[y][x-2] * grid[y][x-3];
-        }
-    }
 
-    Integer getVerticalDownProduct(int y, int x){
-        if(y+3 > 19){
-            return Integer.MIN_VALUE;
-        }else{
-            return grid[y][x] * grid[y+1][x] * grid[y+2][x] * grid[y+3][x];
-        }
-    }
+	public static void main(String[] args) throws Exception {
+		System.out.println(new Solution11().getMaxProductForGrid());
+	}
 
-    Integer getVerticalUpProduct(int y, int x){
-        if(y-3 < 0){
-            return Integer.MIN_VALUE;
-        }else{
-            return grid[y][x] * grid[y-1][x] * grid[y-2][x] * grid[y-3][x];
-        }
-    }
+	Integer getMaxProductForGrid() throws Exception{
+        List<List<Integer>> grid = getGrid();
+	    Integer max = Integer.MIN_VALUE;
+		for (int y = 0; y < grid.size(); y++) {
+			for (int x = 0; x < grid.get(y).size(); x++) {
+				max = Integer.max(max, getMaxProductForAPoint(grid, y, x));
+			}
+		}
+		return max;
+	}
 
-    Integer getDiagonalProduct(int y, int x){
-        return Integer.max(
-                Integer.max(getDiagonalLeftDownProduct(y,x) , getDiagonalLeftUpProduct(y,x)),
-                Integer.max(getDiagonalRightDownProduct(y,x), getDiagonalRightUpProduct(y,x)));
+	Integer getMaxProductForAPoint(List<List<Integer>> grid, int y, int x) {
+		Tuple tuple = new Tuple(y, x);
+		Integer horizontal = Integer.max(getTupleProduct(grid, tuple, Tuple.moveHorizontalLeft), getTupleProduct(grid, tuple, Tuple.moveHorizontalRight));
+		Integer vertical = Integer.max(getTupleProduct(grid, tuple, Tuple.moveVerticalDown), getTupleProduct(grid, tuple, Tuple.moveVerticalUp));
+		Integer diagonal =
+				Integer.max(
+						Integer.max(getTupleProduct(grid, tuple, Tuple.moveDiagonalLeftDown), getTupleProduct(grid, tuple, Tuple.moveDiagonalLeftUp)),
+						Integer.max(getTupleProduct(grid, tuple, Tuple.moveDiagonalRightDown), getTupleProduct(grid, tuple, Tuple.moveDiagonalRightUp))
+				);
 
-    }
+		System.out.println("(" + y + "," + x + ") : " + horizontal + " , " + vertical + " , " + diagonal);
+		return NumberUtils.max(horizontal, vertical, diagonal);
+	}
 
-    Integer getDiagonalRightDownProduct(int y, int x){
-        if(y+3 > 19 || x+3>19){
-            return Integer.MIN_VALUE;
-        }else{
-            return grid[y][x] * grid[y+1][x+1] * grid[y+2][x+2] * grid[y+3][x+3];
-        }
-    }
 
-    Integer getDiagonalLeftDownProduct(int y, int x){
-        if(y+3 > 19 || x-3<0){
-            return Integer.MIN_VALUE;
-        }else{
-            return grid[y][x] * grid[y+1][x-1] * grid[y+2][x-2] * grid[y+3][x-3];
-        }
-    }
+	Integer getTupleProduct(List<List<Integer>> grid, Tuple tuple, Function<Tuple, Tuple> nextTuple) {
+		Tuple firstMove = tuple.move(nextTuple);
+		Tuple secondMove = firstMove.move(nextTuple);
+		Tuple thirdMove = secondMove.move(nextTuple);
+		return tuple.getFromGrid(grid)
+				* firstMove.getFromGrid(grid)
+				* secondMove.getFromGrid(grid)
+				* thirdMove.getFromGrid(grid);
+	}
 
-    Integer getDiagonalRightUpProduct(int y, int x){
-        if(y-3 < 0 || x+3>19){
-            return Integer.MIN_VALUE;
-        }else{
-            return grid[y][x] * grid[y-1][x+1] * grid[y-2][x+2] * grid[y-3][x+3];
-        }
-    }
 
-    Integer getDiagonalLeftUpProduct(int y, int x){
-        if(y-3 < 0 || x-3<0){
-            return Integer.MIN_VALUE;
-        }else{
-            return grid[y][x] * grid[y-1][x-1] * grid[y-2][x-2] * grid[y-3][x-3];
-        }
-    }
+	List<List<Integer>> getGrid() throws Exception {
+		Function<String, List<Integer>> parseLine = line -> {
+			List<Integer> returnList =
+					Arrays.asList(StringUtils.split(line))
+							.stream()
+							.map(Integer::parseInt)
+							.collect(Collectors.toList());
+			return returnList;
+		};
+		return Utility.readFile("Solution11", parseLine);
+	}
 
-    Integer[][] getGrid() throws Exception{
-        Path resource = Paths.get(ClassLoader.getSystemResource("Solution11").toURI());
-        try (Stream<String> lines = Files.lines(resource)) {
-            List<Integer[]> parsedLines =
-                    lines.map(this::getGridLine).collect(Collectors.toList());
-            return parsedLines.toArray(new Integer[parsedLines.size()][]);
-        }
-    }
 
-    Integer[] getGridLine(String line){
-        List<Integer> returnList =
-                Arrays.asList(StringUtils.split(line))
-                .stream()
-                .map(Integer::parseInt)
-                .collect(Collectors.toList());
-        return returnList.toArray(new Integer[returnList.size()]);
-    }
 }
