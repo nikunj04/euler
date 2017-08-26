@@ -1,11 +1,16 @@
 package com.raval.euler.problems;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -42,39 +47,40 @@ import java.util.stream.Stream;
  * Created by nikunj on 26/08/17.
  */
 public class Solution8 {
-    Long[] series;
-    public Solution8() throws Exception{
-        series = getSeries();
+
+
+    Long productForPosition(List<Long> parsedLines,int numberOfDigits,int position){
+        return Stream.iterate(0L, i -> i+1)
+                .limit(numberOfDigits)
+                .reduce(1L, (aLong, aLong2) -> aLong * parsedLines.get(position+aLong2.intValue()));
     }
 
-    Long maxProduct(int numberOfDigits){
-        Long max = Long.MIN_VALUE;
-        for (int i=0;i<series.length - numberOfDigits;i++){
-            Long product = 1L;
-            for(int j=0; j< numberOfDigits; j++){
-                product = product*series[i+j];
-            }
-            max = Long.max(max, product);
-        }
-        return max;
+    Long maxProduct(int numberOfDigits) throws Exception{
+        List<Long> parsedLines = getSeries();
+        return
+                Stream.iterate(0L, aLong -> aLong + 1L)
+                        .limit(parsedLines.size() - numberOfDigits)
+                        .map(position -> productForPosition(parsedLines, numberOfDigits, position.intValue()))
+                        .mapToLong(value -> value).max().orElse(Long.MIN_VALUE);
     }
 
-    Long[] getSeries() throws Exception{
-        Path resource = Paths.get(ClassLoader.getSystemResource("Solution8").toURI());
-        try (Stream<String> lines = Files.lines(resource)) {
-            List<Long> parsedLines =
-                    lines.map(this::getLine).flatMap(List::stream).collect(Collectors.toList());
-            return parsedLines.toArray(new Long[parsedLines.size()]);
-        }
+
+    List<Long> getSeries() throws Exception{
+        Function<String, List<Long>> functionToParseLine =
+                str -> Stream.iterate(0, i -> i+1)
+                        .limit(str.length())
+                        .map(str::charAt)
+                        .map(c -> Character.toString(c))
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+
+        return  Utility.readFile("Solution8", functionToParseLine)
+                .stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
-    List<Long> getLine(String str){
-        List<Long> returnList = new ArrayList<>();
-        for(int i=0;i<str.length();i++){
-            returnList.add(Long.parseLong(Character.toString(str.charAt(i))));
-        }
-        return returnList;
-    }
+
 
     public static void main(String[] args) throws Exception {
         System.out.println(new Solution8().maxProduct(13));

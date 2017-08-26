@@ -21,18 +21,9 @@ public class Solution3 {
 
         return LongStream.range(2, sqrRoot)
                 .filter(l -> number % l == 0)
-                .filter(l -> isPrime(l))
+                .filter(l -> Utility.isPrime(l))
                 .max().orElse(number);
     }
 
-    static boolean isPrime(long number) {
-        Long sqrRoot = new Double(number / Math.sqrt(number)).longValue();
 
-        for (long l = 2; l <= sqrRoot; l++) {
-            if (number % l == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

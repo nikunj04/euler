@@ -2,6 +2,7 @@ package com.raval.euler.problems;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -15,27 +16,13 @@ import java.util.stream.Stream;
  */
 public class Solution7 {
     public static void main(String[] args) {
-        List<Long> primes = new ArrayList<>();
-        int maxSize=10001;
-        long counter = 2;
-        while(primes.size()<maxSize){
-            if(isPrime(counter)){
-                primes.add(counter);
-            }
-            counter++;
-        }
-        System.out.println(primes.get(maxSize-1));
+        System.out.println(
+                Stream.iterate(2L , number1 -> number1 + 1L)
+                .filter(Utility::isPrime)
+                .limit(10001)
+                .mapToLong(value -> value)
+                .max());
     }
 
-    static boolean isPrime(long number) {
-        if(number ==2 || number == 3) return true;
-        Long sqrRoot = new Double(number / Math.sqrt(number)).longValue();
 
-        for (long l = 2; l <= sqrRoot; l++) {
-            if (number % l == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
