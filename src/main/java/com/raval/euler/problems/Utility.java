@@ -16,14 +16,14 @@ import java.util.stream.Stream;
  */
 public class Utility {
 
-    static Set<Long> findFactor(long number){
+    static Set<Long> findFactor(long number) {
         long half = new Double(number / Math.sqrt(number)).longValue();
         Set<Long> factors = new HashSet<>();
         factors.add(1L);
-        for(long i=1;i<=half;i++){
-            if(number%i == 0){
+        for (long i = 1; i <= half; i++) {
+            if (number % i == 0) {
                 factors.add(i);
-                factors.add(number/i);
+                factors.add(number / i);
             }
         }
         return factors;
@@ -33,20 +33,20 @@ public class Utility {
         return findFactor(number).size() <= 2 ? true : false;
     }
 
-    static Long findGCF(long number1, long number2){
+    static Long findGCF(long number1, long number2) {
         Set<Long> factor1 = findFactor(number1);
         Set<Long> factor2 = findFactor(number2);
         factor1.retainAll(factor2);
         long max = 1L;
-        for(Long value:factor1){
-            if(value>max){
+        for (Long value : factor1) {
+            if (value > max) {
                 max = value;
             }
         }
         return max;
     }
 
-    static <T> List<T> readFile(String strResource, Function<String, T>  function) throws Exception{
+    static <T> List<T> readFile(String strResource, Function<String, T> function) throws Exception {
         Path resource = Paths.get(ClassLoader.getSystemResource(strResource).toURI());
         List<List<T>> returnList = new ArrayList<>();
         try (Stream<String> lines = Files.lines(resource)) {

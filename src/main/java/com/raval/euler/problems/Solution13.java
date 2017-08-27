@@ -106,10 +106,8 @@ package com.raval.euler.problems;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.IntStream;
 
 /**
  * Created by nikunj on 26/08/17.
@@ -117,7 +115,12 @@ import java.util.stream.IntStream;
 public class Solution13 {
 
 
-    String sum(List<String> list){
+    public static void main(String[] args) throws Exception {
+        List<String> values = Utility.readFile("Solution13", Function.identity());
+        System.out.println(new Solution13().sum(values).substring(0, 10));
+    }
+
+    String sum(List<String> list) {
         return list.stream().reduce((s, s2) -> sum(s, s2)).orElse("Could generate Sum");
     }
 
@@ -138,12 +141,7 @@ public class Solution13 {
         return removeLeadingZeros(new String(result));
     }
 
-    String removeLeadingZeros(String str){
+    String removeLeadingZeros(String str) {
         return str.replaceFirst("^0+(?!$)", "");
-    }
-
-    public static void main(String[] args) throws Exception {
-        List<String> values = Utility.readFile("Solution13", Function.identity());
-        System.out.println(new Solution13().sum(values).substring(0, 10));
     }
 }

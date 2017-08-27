@@ -4,10 +4,6 @@ package com.raval.euler.problems;
  * Created by nikunj on 25/08/17.
  */
 
-import org.apache.commons.lang.ArrayUtils;
-
-import java.util.*;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -20,12 +16,10 @@ public class Solution5 {
     public static void main(String[] args) {
         System.out.println(
                 Stream.iterate(20L, aLong -> aLong - 1)
-                .limit(20)
-                .reduce(1L , (answer, i) -> answer * i /Utility.findGCF(i,answer))
+                        .limit(20)
+                        .reduce(1L, (answer, i) -> answer * i / Utility.findGCF(i, answer))
         );
     }
-
-
 
 
 }

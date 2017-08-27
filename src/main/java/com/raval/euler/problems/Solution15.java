@@ -13,46 +13,45 @@ import java.util.stream.Collectors;
  */
 
 /**
- *
- https://projecteuler.net/problem=15
-
- In the writtern solution I could find that the series looks like this
-
- 1,
- 2,
- 6,
- 20,
- 70,
- 252,
- 924,
-
- But I could not find the 21st term
-
- So googling the website https://oeis.org/A000984
-
- Gave me the 21st term is  137846528820
-
- the eqation it seems is Central binomial coefficients: binomial(2*n,n) = (2*n)!/(n!)^2
-
+ * https://projecteuler.net/problem=15
+ * <p>
+ * In the writtern solution I could find that the series looks like this
+ * <p>
+ * 1,
+ * 2,
+ * 6,
+ * 20,
+ * 70,
+ * 252,
+ * 924,
+ * <p>
+ * But I could not find the 21st term
+ * <p>
+ * So googling the website https://oeis.org/A000984
+ * <p>
+ * Gave me the 21st term is  137846528820
+ * <p>
+ * the eqation it seems is Central binomial coefficients: binomial(2*n,n) = (2*n)!/(n!)^2
  */
 public class Solution15 {
 
-    class Node{
-        String value;
-        Node left;
-        Node right;
-
+    public static void main(String[] args) throws Exception {
+        Solution15 solution15 = new Solution15();
+        Node rootNode = solution15.generateTree(solution15.getGrid());
+        List<String> paths = new ArrayList<>();
+        solution15.getPossiblePaths(paths, rootNode, "");
+        System.out.println(paths.size());
     }
 
-    Node generateTree(List<List<String>> grid){
+    Node generateTree(List<List<String>> grid) {
         return generateNode(grid, 0, 0);
     }
 
-    Node generateNode(List<List<String>> grid, int y, int x){
+    Node generateNode(List<List<String>> grid, int y, int x) {
         Node currentNode = new Node();
         currentNode.value = grid.get(y).get(x);
-        currentNode.left =  (y <  grid.size()) && (x+1 <  grid.get(y).size()) ? generateNode(grid, y, x+1) : null;
-        currentNode.right = (y+1 <  grid.size()) ? generateNode(grid, y+1, x) : null;
+        currentNode.left = (y < grid.size()) && (x + 1 < grid.get(y).size()) ? generateNode(grid, y, x + 1) : null;
+        currentNode.right = (y + 1 < grid.size()) ? generateNode(grid, y + 1, x) : null;
         return currentNode;
     }
 
@@ -67,23 +66,20 @@ public class Solution15 {
         return Utility.readFile("Solution15A", parseLine);
     }
 
-    void getPossiblePaths(List<String> paths, Node node, String str){
-        if(node == null) return;
+    void getPossiblePaths(List<String> paths, Node node, String str) {
+        if (node == null) return;
 
-        if(node.left != null) getPossiblePaths(paths, node.left, str + node.value + " -> ");
-        if(node.right != null) getPossiblePaths(paths, node.right, str + node.value + " -> ");
-        if(node.left == null && node.right == null) paths.add(str + node.value);
+        if (node.left != null) getPossiblePaths(paths, node.left, str + node.value + " -> ");
+        if (node.right != null) getPossiblePaths(paths, node.right, str + node.value + " -> ");
+        if (node.left == null && node.right == null) paths.add(str + node.value);
     }
 
-    public static void main(String[] args) throws Exception{
-        Solution15 solution15 = new Solution15();
-        Node rootNode = solution15.generateTree(solution15.getGrid());
-        List<String> paths = new ArrayList<>();
-        solution15.getPossiblePaths(paths, rootNode, "");
-        System.out.println(paths.size());
+    class Node {
+        String value;
+        Node left;
+        Node right;
+
     }
-
-
 
 
 }

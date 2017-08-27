@@ -10,6 +10,24 @@ import java.util.stream.Stream;
  */
 public class Solution16_BetterSolution {
 
+    public static void main(String[] args) {
+        Solution16_BetterSolution solution16BetterSolution = new Solution16_BetterSolution();
+        String value = "1";
+        for (int i = 1; i < 1001; i++) {
+            value = solution16BetterSolution.sum(value, value);
+            System.out.println(i + "   " + value);
+        }
+
+        Function<String, Long> functionToParseLine =
+                str -> Stream.iterate(0, i -> i + 1)
+                        .limit(str.length())
+                        .map(str::charAt)
+                        .map(c -> Character.toString(c))
+                        .mapToLong(Long::parseLong)
+                        .sum();
+        System.out.println(functionToParseLine.apply(value));
+    }
+
     String sum(String value1, String value2) {
         value1 = removeLeadingZeros(value1);
         value2 = removeLeadingZeros(value2);
@@ -27,25 +45,7 @@ public class Solution16_BetterSolution {
         return removeLeadingZeros(new String(result));
     }
 
-    String removeLeadingZeros(String str){
+    String removeLeadingZeros(String str) {
         return str.replaceFirst("^0+(?!$)", "");
-    }
-
-    public static void main(String[] args) {
-        Solution16_BetterSolution solution16BetterSolution = new Solution16_BetterSolution();
-        String value="1";
-        for(int i=1;i<1001;i++){
-            value = solution16BetterSolution.sum(value, value);
-            System.out.println(i+"   " + value);
-        }
-
-        Function<String, Long> functionToParseLine =
-                str -> Stream.iterate(0, i -> i+1)
-                        .limit(str.length())
-                        .map(str::charAt)
-                        .map(c -> Character.toString(c))
-                        .mapToLong(Long::parseLong)
-                        .sum();
-        System.out.println(functionToParseLine.apply(value));
     }
 }
