@@ -32,7 +32,8 @@ public class Solution16 {
                         .map(c -> Character.toString(c))
                         .mapToLong(Long::parseLong)
                         .sum();
-
-        System.out.println(functionToParseLine.apply(get2raiseTo(1000).toString()));
+        BigInteger ans = get2raiseTo(1000);
+        System.out.println(ans.toString());
+        System.out.println(functionToParseLine.apply(ans.toString()));
     }
 }

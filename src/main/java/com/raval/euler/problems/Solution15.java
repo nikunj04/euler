@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  Gave me the 21st term is  137846528820
 
  the eqation it seems is Central binomial coefficients: binomial(2*n,n) = (2*n)!/(n!)^2
- 
+
  */
 public class Solution15 {
 
