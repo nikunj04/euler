@@ -2,10 +2,8 @@ package com.raval.euler.problems;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,7 +13,6 @@ import java.util.stream.Collectors;
  */
 
 /**
- *
  * This actually seems like a better solution but the problem is that even Mac book pro hangs on this one ;-)
  */
 public class Solution15_BetterSolution {
@@ -30,13 +27,13 @@ public class Solution15_BetterSolution {
     }
 
     Node generateTree(List<List<Node>> grid) {
-        for(int i=grid.size() -1 ; i>=0; i--){
-            for(int j=grid.get(i).size()-1;j>=0;j--){
-                if(j>0){
-                    grid.get(j-1).get(i).left = grid.get(j).get(i);
+        for (int i = grid.size() - 1; i >= 0; i--) {
+            for (int j = grid.get(i).size() - 1; j >= 0; j--) {
+                if (j > 0) {
+                    grid.get(j - 1).get(i).left = grid.get(j).get(i);
                 }
-                if(i>0){
-                    grid.get(j).get(i-1).right = grid.get(j).get(i);
+                if (i > 0) {
+                    grid.get(j).get(i - 1).right = grid.get(j).get(i);
                 }
             }
         }
