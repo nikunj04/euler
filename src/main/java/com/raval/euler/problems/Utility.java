@@ -30,7 +30,11 @@ public class Utility {
     }
 
     static boolean isPrime(long number) {
-        return findFactor(number).size() <= 2 ? true : false;
+        long half = new Double(number / Math.sqrt(number)).longValue();
+        for (long i = 2; i <= half; i++) {
+            if (number % i == 0) return false;
+        }
+        return true;
     }
 
     static Long findGCF(long number1, long number2) {
