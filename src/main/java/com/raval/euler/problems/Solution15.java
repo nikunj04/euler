@@ -2,49 +2,65 @@ package com.raval.euler.problems;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Created by nikunj on 27/08/17.
- */
-
-/**
- * https://projecteuler.net/problem=15
- * <p>
- * In the writtern solution I could find that the series looks like this
- * <p>
- * 1,
- * 2,
- * 6,
- * 20,
- * 70,
- * 252,
- * 924,
- * <p>
- * But I could not find the 21st term
- * <p>
- * So googling the website https://oeis.org/A000984
- * <p>
- * Gave me the 21st term is  137846528820
- * <p>
- * the eqation it seems is Central binomial coefficients: binomial(2*n,n) = (2*n)!/(n!)^2
+ * Created by nikunj on 01/09/17.
  */
 public class Solution15 {
 
     public static void main(String[] args) throws Exception {
-        Solution15 solution15 = new Solution15();
-        Node rootNode = solution15.generateTree(solution15.getGrid());
-        List<String> paths = new ArrayList<>();
-        solution15.getPossiblePaths(paths, rootNode, "");
-        System.out.println(paths.size());
+        Solution15 solution = new Solution15();
+        Node rootNode = solution.generateTree(solution.getGrid());
+        AtomicInteger count = new AtomicInteger(0);
+        solution.traversePath(rootNode, count);
+        System.out.println(count);
     }
 
-    Node generateTree(List<List<String>> grid) {
-        return generateNode(grid, 0, 0);
+
+    void traversePath(Node node, AtomicInteger count) {
+        if (node.left == null && node.right == null) {
+            System.out.println(count.incrementAndGet());
+        }
+        if (node.left != null) {
+            traversePath(node.left, count);
+        }
+        if (node.right != null) {
+            traversePath(node.right, count);
+        }
+    }
+
+    void traversePath(Node node, Set<Node> path) {
+        path.add(node);
+        if (node.left == null && node.right == null) {
+            System.out.println(path);
+        }
+        if (node.left != null) {
+            traversePath(node.left, path);
+        }
+        if (node.right != null) {
+            traversePath(node.right, path);
+        }
+        path.remove(node);
+    }
+
+    Node generateTree(List<List<Node>> grid) {
+        for (int i = grid.size() - 1; i >= 0; i--) {
+            for (int j = grid.get(i).size() - 1; j >= 0; j--) {
+                if (j > 0) {
+                    grid.get(j - 1).get(i).left = grid.get(j).get(i);
+                }
+                if (i > 0) {
+                    grid.get(j).get(i - 1).right = grid.get(j).get(i);
+                }
+            }
+        }
+        return grid.get(0).get(0);
     }
 
     Node generateNode(List<List<String>> grid, int y, int x) {
@@ -55,31 +71,56 @@ public class Solution15 {
         return currentNode;
     }
 
-    List<List<String>> getGrid() throws Exception {
-        Function<String, List<String>> parseLine = line -> {
-            List<String> returnList =
+    List<List<Node>> getGrid() throws Exception {
+        Function<String, List<Node>> parseLine = line -> {
+            List<Node> returnList =
                     Arrays.asList(StringUtils.split(line))
                             .stream()
+                            .map(str -> new Node(str))
                             .collect(Collectors.toList());
             return returnList;
         };
-        return Utility.readFile("Solution15A", parseLine);
+        return Utility.readFile("Solution15", parseLine);
     }
 
-    void getPossiblePaths(List<String> paths, Node node, String str) {
-        if (node == null) return;
-
-        if (node.left != null) getPossiblePaths(paths, node.left, str + node.value + " -> ");
-        if (node.right != null) getPossiblePaths(paths, node.right, str + node.value + " -> ");
-        if (node.left == null && node.right == null) paths.add(str + node.value);
-    }
-
-    class Node {
+    class Node implements Comparable<Node> {
         String value;
         Node left;
         Node right;
+        Node previous = null;
 
+        public Node() {
+        }
+
+        public Node(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return o.value.compareTo(this.value);
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "value='" + value + '\'' +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Node node = (Node) o;
+
+            return value.equals(node.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
     }
-
-
 }
